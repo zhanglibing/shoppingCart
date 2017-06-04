@@ -1,0 +1,60 @@
+new Vue({
+    el:'.container',
+    data:{
+      limitNumber:3,
+      addressList:[],
+      currentIndex:0,
+      shippingMethod:1,
+      deleteAddressFlag:false,
+      eleteIndex:0,
+      addressFlag:false,
+      address:{"addressId":"100001",
+            "userName":"JackBean",
+            "streetName":"北京市朝阳区朝阳公园1",
+            "postCode":"100001",
+            "tel":"12345678901",
+            "isDefault":false}
+    },
+    mounted:function(){
+        this.$nextTick(function(){
+            this.getAddressList();
+        })
+    },
+    filters:{
+
+    },
+    methods:{
+        getAddressList:function(){
+            this.$http.get("data/address.json").then(res=>{
+                this.addressList=res.data.result;
+                console.log(this.addressList)
+            })
+        },
+        setDefault:function(addressId){
+          this.addressList.forEach(function(val,index){
+              if(val.addressId==addressId){
+                  val.isDefault=true;
+              }else{
+                  val.isDefault=false;
+              }
+          })
+        },
+        setDeleteIndex:function(index){
+           this.deleteIndex=index;
+            this.deleteAddressFlag=true;
+        },
+        deleteAddress:function(){
+            this.addressList.splice(this.deleteIndex,1);
+            this.deleteAddressFlag=false;
+        },
+        Address:function(){
+            this.addressList.push(this.address);
+            this.addressFlag=false;
+        }
+    },
+    computed:{ //实时计算
+        filterAddress:function () {
+            return this.addressList.slice(0,this.limitNumber);
+        }
+    }
+})
